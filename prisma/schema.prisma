@@ -1,0 +1,92 @@
+datasource db {
+    provider = "mysql"
+    url      = "mysql://anya:anya123@45.90.218.142:3306/anya"
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Zakaz {
+    id_Zakaza          Int             @id @default(autoincrement())
+    Barcode            Int
+    Tovar              Tovar           @relation(fields: [Barcode], references: [Barcode])
+    id_Pokypatel       Int
+    Pokypatel          Pokupateli      @relation(fields: [id_Pokypatel], references: [id_Pokypatel])
+    id_Rabotnika       Int
+    Rabotnik           Rabotniki       @relation(fields: [id_Rabotnika], references: [id_Rabotnika])
+    id_Dostavki        Int
+    Dostavka           Dostavka        @relation(fields: [id_Dostavki], references: [id_Dostavki])
+    id_Status_Dostavki Int
+    Status_Dostavki    Status_Dostavki @relation(fields: [id_Status_Dostavki], references: [id_Status_Dostavki])
+    Data_Dostavki      DateTime        @db.Date
+    Srok_Xranenia      String
+}
+
+model Dostavka {
+    id_Dostavki  Int     @id @default(autoincrement())
+    Naimenovanie String  @db.VarChar(50)
+    Zakaz        Zakaz[]
+}
+
+model Status_Dostavki {
+    id_Status_Dostavki Int     @id @default(autoincrement())
+    Naimenovanie       String  @db.VarChar(50)
+    Zakaz              Zakaz[]
+}
+
+model Pokupateli {
+    id_Pokypatel Int        @id @default(autoincrement())
+    Familia      String     @db.VarChar(50)
+    Name         String     @db.VarChar(50)
+    Otchestvo    String     @db.VarChar(50)
+    Telephone    String     @db.VarChar(11)
+    Adress       String     @db.VarChar(50)
+    Mail         String     @db.VarChar(50)
+    Zakaz        Zakaz[]
+    Yacheiki     Yacheiki[]
+}
+
+model Rabotniki {
+    id_Rabotnika Int     @id @default(autoincrement())
+    Familia      String  @db.VarChar(50)
+    Name         String  @db.VarChar(50)
+    Otchestvo    String  @db.VarChar(50)
+    Dolgnost     String  @db.VarChar(30)
+    Login        String  @db.VarChar(25)
+    Parol        String  @db.VarChar(25)
+    Zakaz        Zakaz[]
+    Tovar        Tovar[]
+}
+
+model Postavchik {
+    id_Postavchika         Int     @id @default(autoincrement())
+    Naimenovanie           String  @db.VarChar(50)
+    Pravovai_otvetstvenost String  @db.VarChar(10)
+    INN                    Int
+    Tovar                  Tovar[]
+}
+
+model Tovar {
+    Barcode                   Int        @id @default(autoincrement())
+    Naimenovanie              String     @db.VarChar(50)
+    Artikyl                   String     @db.VarChar(10)
+    Marka_Tovara              String     @db.VarChar(50)
+    Data_postuplenia_na_sklad DateTime   @db.Date
+    Price                     Int
+    id_Postavchika            Int
+    Postavchik                Postavchik @relation(fields: [id_Postavchika], references: [id_Postavchika])
+    id_Rabotnika              Int
+    Rabotnik                  Rabotniki  @relation(fields: [id_Rabotnika], references: [id_Rabotnika])
+    Zakaz                     Zakaz[]
+    Yacheika                  Yacheiki[]
+}
+
+model Yacheiki {
+    id_Sklada    Int
+    id_Yacheiki  Int        @id @default(autoincrement())
+    id_Pokupatel Int
+    Barcode      Int
+    Tovar        Tovar      @relation(fields: [Barcode], references: [Barcode])
+    Pokupatel    Pokupateli @relation(fields: [id_Pokupatel], references: [id_Pokypatel])
+}
